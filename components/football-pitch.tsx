@@ -45,69 +45,74 @@ export function FootballPitch({
             'repeating-linear-gradient(0deg,#0a160d,#0a160d 8%,#0c1a10 8%,#0c1a10 16%)',
         }}
       >
-        {/* pitch markings */}
         <div className="pointer-events-none absolute inset-3 rounded-lg border border-white/10" />
         <div className="pointer-events-none absolute left-3 right-3 top-1/2 h-px -translate-y-1/2 bg-white/10" />
         <div className="pointer-events-none absolute left-1/2 top-1/2 size-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
         <div className="pointer-events-none absolute bottom-3 left-1/2 h-14 w-32 -translate-x-1/2 rounded-t-sm border border-b-0 border-white/10" />
         <div className="pointer-events-none absolute left-1/2 top-3 h-14 w-32 -translate-x-1/2 rounded-b-sm border border-t-0 border-white/10" />
 
-        {squad.map(({ slot, player }) => (
-          <div
-            key={slot.id}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-          >
-            <AnimatePresence mode="wait">
-              {player ? (
-                <motion.button
-                  key="filled"
-                  type="button"
-                  initial={{ scale: 0, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  exit={{ scale: 0 }}
-                  transition={{ type: 'spring', damping: 14, stiffness: 260 }}
-                  onClick={() => onRemove(slot.id)}
-                  className="group relative flex flex-col items-center"
-                >
-                  <div
+        {squad.map(({ slot, player }) => {
+          const isCompatible = selectedPlayer?.position === slot.role;
+          
+          return (
+            <div
+              key={slot.id}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
+            >
+              <AnimatePresence mode="wait">
+                {player ? (
+                  <motion.button
+                    key="filled"
+                    type="button"
+                    initial={{ scale: 0, rotate: -20 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: 'spring', damping: 14, stiffness: 260 }}
+                    onClick={() => onRemove(slot.id)}
+                    className="group relative flex flex-col items-center"
+                  >
+                    <div
+                      className={cn(
+                        'flex size-12 flex-col items-center justify-center rounded-full border-2 bg-gradient-to-b from-[#1b1810] to-[#0a0a0b]',
+                        fitRing(player, slot.role),
+                      )}
+                    >
+                      <span className="text-sm font-black text-gradient-gold leading-none">
+                        {player.overall}
+                      </span>
+                      <Flag code={player.nation.code} className="mt-0.5 h-2 w-3" alt="" />
+                    </div>
+                    <span className="mt-1 max-w-16 truncate rounded bg-background/80 px-1 text-[9px] font-bold text-foreground">
+                      {player.name.split(' ').pop()}
+                    </span>
+                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      <X className="size-2.5" strokeWidth={3} />
+                    </span>
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    key="empty"
+                    type="button"
+                    onClick={() => onPlace(slot.id)}
+                    disabled={!selectedPlayer || (selectedPlayer && !isCompatible)}
                     className={cn(
-                      'flex size-12 flex-col items-center justify-center rounded-full border-2 bg-gradient-to-b from-[#1b1810] to-[#0a0a0b]',
-                      fitRing(player, slot.role),
+                      'flex size-11 flex-col items-center justify-center rounded-full border-2 border-dashed transition-all',
+                      selectedPlayer && isCompatible
+                        ? 'animate-pulse border-green-500 bg-green-500/20 text-green-500 ring-2 ring-green-500 ring-offset-2 ring-offset-[#0a160d]'
+                        : selectedPlayer
+                        ? 'border-primary/20 bg-primary/5 opacity-30 cursor-not-allowed'
+                        : 'border-primary/40 bg-primary/5 text-primary/70',
                     )}
                   >
-                    <span className="text-sm font-black text-gradient-gold leading-none">
-                      {player.overall}
-                    </span>
-                    <Flag code={player.nation.code} className="mt-0.5 h-2 w-3" alt="" />
-                  </div>
-                  <span className="mt-1 max-w-16 truncate rounded bg-background/80 px-1 text-[9px] font-bold text-foreground">
-                    {player.name.split(' ').pop()}
-                  </span>
-                  <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100">
-                    <X className="size-2.5" strokeWidth={3} />
-                  </span>
-                </motion.button>
-              ) : (
-                <motion.button
-                  key="empty"
-                  type="button"
-                  onClick={() => onPlace(slot.id)}
-                  disabled={!selectedPlayer}
-                  className={cn(
-                    'flex size-11 flex-col items-center justify-center rounded-full border-2 border-dashed transition-all',
-                    selectedPlayer
-                      ? 'animate-pulse border-neon bg-neon/10 text-neon'
-                      : 'border-primary/40 bg-primary/5 text-primary/70',
-                  )}
-                >
-                  <Plus className="size-3.5" />
-                  <span className="text-[8px] font-bold">{slot.role}</span>
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
-        ))}
+                    <Plus className="size-3.5" />
+                    <span className="text-[8px] font-bold">{slot.role}</span>
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+          )
+        })}
       </div>
 
       {selectedPlayer && (

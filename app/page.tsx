@@ -111,11 +111,20 @@ export default function Page() {
   }, [])
 
   const placePlayer = useCallback((slotId: string) => {
-    if (!selected) return
-    setSquad((prev) => prev.map((s) => (s.slot.id === slotId ? { ...s, player: selected } : s)))
-    setPool((prev) => prev.filter((p) => p.id !== selected.id))
-    setSelected(null)
-  }, [selected])
+  if (!selected) return;
+  
+  // Slotu bul
+  const targetSlot = squad.find(s => s.slot.id === slotId);
+  
+  // ÖNEMLİ: İstersen burada "Pozisyon uyuşmazlığı" uyarısı koyabilirsin, 
+  // ama her yere koyabilmek için bu if'i kaldır:
+  // if (selected.position !== targetSlot?.slot.role) return; 
+
+  setSquad((prev) => prev.map((s) => (s.slot.id === slotId ? { ...s, player: selected } : s)));
+  setPool((prev) => prev.filter((p) => p.id !== selected.id));
+  setSelected(null);
+}, [selected, squad]);
+
 
   const removePlayer = useCallback((slotId: string) => {
     setSquad((prev) =>

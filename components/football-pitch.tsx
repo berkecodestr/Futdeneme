@@ -62,14 +62,13 @@ export function FootballPitch({
             >
               <AnimatePresence mode="wait">
                 {player ? (
-                  <motion.button
+                  // Kart doluysa div kullanıyoruz ki tıklayınca gitmesin
+                  <motion.div
                     key="filled"
-                    type="button"
                     initial={{ scale: 0, rotate: -20 }}
                     animate={{ scale: 1, rotate: 0 }}
                     exit={{ scale: 0 }}
                     transition={{ type: 'spring', damping: 14, stiffness: 260 }}
-                    onClick={() => onRemove(slot.id)}
                     className="group relative flex flex-col items-center"
                   >
                     <div
@@ -86,11 +85,17 @@ export function FootballPitch({
                     <span className="mt-1 max-w-16 truncate rounded bg-background/80 px-1 text-[9px] font-bold text-foreground">
                       {player.name.split(' ').pop()}
                     </span>
-                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100">
+                    {/* Sadece X butonuna basınca oyuncu silinir */}
+                    <button
+                      type="button"
+                      onClick={() => onRemove(slot.id)}
+                      className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    >
                       <X className="size-2.5" strokeWidth={3} />
-                    </span>
-                  </motion.button>
+                    </button>
+                  </motion.div>
                 ) : (
+                  // Boş slotlar tıklanabilir kalıyor
                   <motion.button
                     key="empty"
                     type="button"

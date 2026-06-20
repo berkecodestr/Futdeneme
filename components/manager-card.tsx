@@ -40,11 +40,21 @@ export function ManagerCard({
             <motion.div
               animate={rolling ? { rotate: 360 } : { rotate: 0 }}
               transition={{ duration: 0.6, repeat: rolling ? Infinity : 0, ease: 'linear' }}
-              className="flex size-20 items-center justify-center rounded-2xl border-2 border-primary/50 bg-gradient-to-br from-primary/30 to-background"
+              className="flex size-20 items-center justify-center rounded-2xl border-2 border-primary/50 bg-gradient-to-br from-primary/30 to-background overflow-hidden"
             >
-              <span className="text-2xl font-black text-gradient-gold">
-                {manager.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}
-              </span>
+              {/* RESİM KISMI BURAYA EKLENDİ */}
+              {manager.image ? (
+                <img
+                  src={manager.image}
+                  alt={manager.name}
+                  className="size-full object-cover"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              ) : (
+                <span className="text-2xl font-black text-gradient-gold">
+                  {manager.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+                </span>
+              )}
             </motion.div>
             <div className="absolute -bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-primary/40 bg-background px-2 py-0.5">
               <Flag code={manager.nation.code} className="h-2.5 w-4" alt={manager.nation.name} />

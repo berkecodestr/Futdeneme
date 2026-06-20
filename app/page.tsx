@@ -33,6 +33,8 @@ const REWARD = 7500
 
 export default function Page() {
   const [phase, setPhase] = useState<Phase>('draft')
+  // Diziliş değişimi için state
+  const [currentFormation, setCurrentFormation] = useState(() => randomItem(MANAGERS).formation);
   const [coins, setCoins] = useState(12500)
 
   const [manager, setManager] = useState<Manager>(() => randomItem(MANAGERS))

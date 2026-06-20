@@ -68,15 +68,17 @@ export default function Page() {
   }, [pool, search])
 
   const rerollManager = useCallback(() => {
-    setManagerRolling(true)
-    setTimeout(() => {
-      const next = randomItem(MANAGERS.filter((m) => m.id !== manager.id))
-      setManager(next)
-      setSquad(buildSquad(next.formation))
-      setSelected(null)
-      setManagerRolling(false)
-    }, 700)
-  }, [manager.id])
+  setManagerRolling(true)
+  setTimeout(() => {
+    const next = randomItem(MANAGERS.filter((m) => m.id !== manager.id))
+    setManager(next)
+    setCurrentFormation(next.formation) // Seçilen menajere göre dizilişi güncelle
+    setSquad(buildSquad(next.formation))
+    setSelected(null)
+    setManagerRolling(false)
+  }, 700)
+}, [manager.id])
+
 
   const rollPool = useCallback(() => {
     setPoolRolling(true)

@@ -171,7 +171,7 @@ export const PLAYERS: Player[] = [
 ]
 
 export const MANAGERS: Manager[] = [
-  { id: 'm1', name: 'Vittorio Sacchi', nation: NATIONS.it, formation: '4-3-3', chemBonus: 15, rating: 94, trophies: 7 },
+  { id: 'm1', name: 'Vittorio Sacchi', nation: NATIONS.it, formation: '4-3-3', chemBonus: 15, rating: 94, trophies: 7, image: 'https://img.a.transfermarkt.technology/portrait/header/6366-1696013891.png?lm=1' },
   { id: 'm2', name: 'Helmut König', nation: NATIONS.de, formation: '3-5-2', chemBonus: 12, rating: 92, trophies: 6 },
   { id: 'm3', name: 'Diego Vázquez', nation: NATIONS.ar, formation: '4-2-3-1', chemBonus: 14, rating: 93, trophies: 5 },
   { id: 'm4', name: 'Pep Maranço', nation: NATIONS.es, formation: '4-3-3', chemBonus: 18, rating: 95, trophies: 9 },

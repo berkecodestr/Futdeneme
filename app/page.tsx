@@ -58,13 +58,19 @@ export default function Page() {
 
   // GÜNCELLENMİŞ DİZİLİŞ FONKSİYONU
   const changeFormation = useCallback((formationName: string) => {
-    const foundManager = MANAGERS.find(m => m.formation === formationName);
-    if (foundManager) {
-      setManager(foundManager);
-    }
-    setSquad(buildSquad(formationName));
-    setSelected(null);
-  }, []);
+  // 1. O dizilişe sahip menajeri bul (MANAGERS dizinden)
+  const matchingManager = MANAGERS.find(m => m.formation === formationName);
+  
+  // 2. Eğer menajer varsa onu set et (bu hem resmi hem isimi değiştirir)
+  if (matchingManager) {
+    setManager(matchingManager);
+  }
+  
+  // 3. Squad'ı ve dizilişi güncelle
+  setSquad(buildSquad(formationName));
+  setSelected(null);
+}, []);
+
 
   const rerollManager = useCallback(() => {
     setManagerRolling(true)

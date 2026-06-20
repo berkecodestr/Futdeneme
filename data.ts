@@ -1,0 +1,223 @@
+import type {
+  Player,
+  Manager,
+  Nation,
+  Position,
+  Era,
+  Rarity,
+  TournamentTeam,
+} from './types'
+
+export const NATIONS: Record<string, Nation> = {
+  de: { code: 'de', name: 'Germany' },
+  es: { code: 'es', name: 'Spain' },
+  br: { code: 'br', name: 'Brazil' },
+  fr: { code: 'fr', name: 'France' },
+  it: { code: 'it', name: 'Italy' },
+  ar: { code: 'ar', name: 'Argentina' },
+  nl: { code: 'nl', name: 'Netherlands' },
+  pt: { code: 'pt', name: 'Portugal' },
+  eng: { code: 'gb-eng', name: 'England' },
+  hr: { code: 'hr', name: 'Croatia' },
+  uy: { code: 'uy', name: 'Uruguay' },
+  be: { code: 'be', name: 'Belgium' },
+  pl: { code: 'pl', name: 'Poland' },
+  dk: { code: 'dk', name: 'Denmark' },
+  se: { code: 'se', name: 'Sweden' },
+  cz: { code: 'cz', name: 'Czechia' },
+  bg: { code: 'bg', name: 'Bulgaria' },
+  cm: { code: 'cm', name: 'Cameroon' },
+  gh: { code: 'gh', name: 'Ghana' },
+  ci: { code: 'ci', name: 'Ivory Coast' },
+  no: { code: 'no', name: 'Norway' },
+  sct: { code: 'gb-sct', name: 'Scotland' },
+  ng: { code: 'ng', name: 'Nigeria' },
+  co: { code: 'co', name: 'Colombia' },
+}
+
+let pid = 0
+function p(
+  name: string,
+  overall: number,
+  position: Position,
+  nationKey: keyof typeof NATIONS,
+  team: string,
+  teamType: 'national' | 'club',
+  era: Era,
+  rarity: Rarity,
+  stats: [number, number, number, number],
+): Player {
+  pid += 1
+  return {
+    id: `p${pid}`,
+    name,
+    overall,
+    position,
+    nation: NATIONS[nationKey],
+    team,
+    teamType,
+    era,
+    rarity,
+    pace: stats[0],
+    shooting: stats[1],
+    passing: stats[2],
+    defending: stats[3],
+  }
+}
+
+export const PLAYERS: Player[] = [
+  // ---- ICONS / 70s-80s national & legends ----
+  p('Franz Beckenbauer', 94, 'CB', 'de', 'Germany 1974', 'national', '70s', 'icon', [78, 72, 90, 95]),
+  p('Gerd Müller', 93, 'ST', 'de', 'Germany 1974', 'national', '70s', 'icon', [80, 96, 74, 40]),
+  p('Johan Cruyff', 95, 'CAM', 'nl', 'Netherlands 1974', 'national', '70s', 'icon', [89, 88, 95, 55]),
+  p('Pelé', 96, 'CAM', 'br', 'Brazil 1970', 'national', '70s', 'icon', [90, 95, 93, 58]),
+  p('Carlos Alberto', 90, 'RB', 'br', 'Brazil 1970', 'national', '70s', 'icon', [82, 78, 84, 88]),
+  p('Jairzinho', 89, 'RW', 'br', 'Brazil 1970', 'national', '70s', 'legend', [90, 86, 80, 45]),
+  p('Paolo Rossi', 88, 'ST', 'it', 'Italy 1982', 'national', '80s', 'legend', [83, 90, 76, 42]),
+  p('Diego Maradona', 96, 'CAM', 'ar', 'Argentina 1986', 'national', '80s', 'icon', [90, 90, 96, 50]),
+  p('Michel Platini', 93, 'CAM', 'fr', 'France 1984', 'national', '80s', 'icon', [78, 90, 94, 58]),
+  p('Marco van Basten', 94, 'ST', 'nl', 'Netherlands 1988', 'national', '80s', 'icon', [82, 95, 82, 45]),
+  p('Ruud Gullit', 92, 'CAM', 'nl', 'Netherlands 1988', 'national', '80s', 'icon', [86, 88, 90, 70]),
+  p('Frank Rijkaard', 90, 'CDM', 'nl', 'Netherlands 1988', 'national', '80s', 'legend', [80, 78, 86, 90]),
+
+  // ---- Germany legends (squad showcase) ----
+  p('Rudi Völler', 91, 'ST', 'de', 'Germany 1990', 'national', '90s', 'legend', [84, 90, 80, 42]),
+  p('Jürgen Klinsmann', 92, 'ST', 'de', 'Germany 1990', 'national', '90s', 'legend', [88, 91, 80, 44]),
+  p('Thomas Häßler', 90, 'CAM', 'de', 'Germany 1990', 'national', '90s', 'legend', [83, 84, 92, 55]),
+  p('Klaus Augenthaler', 89, 'CB', 'de', 'Germany 1990', 'national', '90s', 'star', [74, 70, 82, 90]),
+  p('Lothar Matthäus', 93, 'CM', 'de', 'Germany 1990', 'national', '90s', 'icon', [82, 86, 90, 84]),
+  p('Andreas Brehme', 89, 'LB', 'de', 'Germany 1990', 'national', '90s', 'star', [80, 80, 85, 86]),
+  p('Oliver Kahn', 91, 'GK', 'de', 'Germany 2002', 'national', '00s', 'legend', [55, 40, 60, 90]),
+  p('Michael Ballack', 90, 'CM', 'de', 'Germany 2002', 'national', '00s', 'star', [78, 87, 86, 80]),
+  p('Miroslav Klose', 89, 'ST', 'de', 'Germany 2014', 'national', '10s', 'star', [80, 89, 76, 44]),
+
+  // ---- 90s icons ----
+  p('Roberto Baggio', 93, 'CAM', 'it', 'Italy 1994', 'national', '90s', 'icon', [85, 90, 92, 48]),
+  p('Paolo Maldini', 94, 'LB', 'it', 'Italy 1994', 'national', '90s', 'icon', [84, 64, 86, 94]),
+  p('Franco Baresi', 92, 'CB', 'it', 'Italy 1994', 'national', '90s', 'icon', [78, 64, 82, 94]),
+  p('Romário', 93, 'ST', 'br', 'Brazil 1994', 'national', '90s', 'icon', [88, 94, 82, 40]),
+  p('Bebeto', 89, 'ST', 'br', 'Brazil 1994', 'national', '90s', 'star', [88, 87, 80, 42]),
+  p('Dunga', 87, 'CDM', 'br', 'Brazil 1994', 'national', '90s', 'gold', [74, 70, 82, 88]),
+  p('Hristo Stoichkov', 91, 'LW', 'bg', 'Bulgaria 1994', 'national', '90s', 'legend', [88, 90, 85, 50]),
+  p('George Weah', 91, 'ST', 'fr', 'AC Milan 1995', 'club', '90s', 'legend', [91, 90, 80, 45]),
+  p('Gabriel Batistuta', 92, 'ST', 'ar', 'Argentina 1998', 'national', '90s', 'icon', [86, 94, 78, 44]),
+  p('Davor Šuker', 90, 'ST', 'hr', 'Croatia 1998', 'national', '90s', 'legend', [85, 90, 80, 42]),
+  p('Zvonimir Boban', 88, 'CM', 'hr', 'Croatia 1998', 'national', '90s', 'gold', [80, 82, 88, 70]),
+
+  // ---- France 1998-2000 ----
+  p('Zinédine Zidane', 95, 'CAM', 'fr', 'France 2000', 'national', '00s', 'icon', [82, 86, 96, 60]),
+  p('Thierry Henry', 93, 'ST', 'fr', 'France 2000', 'national', '00s', 'icon', [95, 92, 84, 45]),
+  p('Patrick Vieira', 90, 'CDM', 'fr', 'France 2000', 'national', '00s', 'star', [82, 78, 86, 90]),
+  p('Marcel Desailly', 89, 'CB', 'fr', 'France 2000', 'national', '00s', 'star', [80, 66, 80, 91]),
+  p('Lilian Thuram', 89, 'RB', 'fr', 'France 2000', 'national', '00s', 'star', [85, 64, 82, 90]),
+  p('David Trezeguet', 88, 'ST', 'fr', 'France 2000', 'national', '00s', 'gold', [82, 90, 74, 42]),
+
+  // ---- Brazil 2002 / Ronaldo era ----
+  p('Ronaldo', 95, 'ST', 'br', 'Brazil 2002', 'national', '00s', 'icon', [94, 95, 82, 45]),
+  p('Ronaldinho', 94, 'CAM', 'br', 'Brazil 2006', 'national', '00s', 'icon', [90, 89, 95, 48]),
+  p('Rivaldo', 92, 'CAM', 'br', 'Brazil 2002', 'national', '00s', 'legend', [85, 91, 91, 50]),
+  p('Cafu', 89, 'RB', 'br', 'Brazil 2002', 'national', '00s', 'star', [89, 70, 84, 86]),
+  p('Roberto Carlos', 91, 'LB', 'br', 'Brazil 2002', 'national', '00s', 'legend', [93, 86, 84, 84]),
+  p('Kaká', 91, 'CAM', 'br', 'Brazil 2007', 'national', '00s', 'legend', [89, 88, 90, 52]),
+
+  // ---- Spain 2010 / Barcelona 2009 ----
+  p('Andrés Iniesta', 92, 'CM', 'es', 'Spain 2010', 'national', '10s', 'icon', [78, 80, 95, 65]),
+  p('Xavi', 92, 'CM', 'es', 'Spain 2010', 'national', '10s', 'icon', [72, 78, 96, 66]),
+  p('Carles Puyol', 88, 'CB', 'es', 'Spain 2010', 'national', '10s', 'star', [78, 60, 76, 90]),
+  p('Sergio Ramos', 90, 'CB', 'es', 'Spain 2010', 'national', '10s', 'star', [82, 72, 80, 91]),
+  p('David Villa', 90, 'ST', 'es', 'Spain 2010', 'national', '10s', 'star', [84, 91, 82, 45]),
+  p('Iker Casillas', 91, 'GK', 'es', 'Spain 2010', 'national', '10s', 'legend', [58, 42, 62, 89]),
+  p('Carles Busquets', 86, 'CDM', 'es', 'Spain 2010', 'national', '10s', 'gold', [66, 64, 86, 86]),
+  p('Lionel Messi', 96, 'RW', 'ar', 'Barcelona 2009', 'club', '00s', 'icon', [91, 94, 93, 40]),
+  p('Samuel Eto\u2019o', 90, 'ST', 'cm', 'Barcelona 2009', 'club', '00s', 'legend', [92, 90, 78, 44]),
+  p('Dani Alves', 87, 'RB', 'br', 'Barcelona 2009', 'club', '00s', 'gold', [88, 72, 86, 82]),
+  p('Yaya Touré', 88, 'CM', 'ci', 'Barcelona 2009', 'club', '00s', 'star', [78, 84, 84, 84]),
+
+  // ---- Modern stars 10s-20s ----
+  p('Cristiano Ronaldo', 95, 'ST', 'pt', 'Portugal 2016', 'national', '10s', 'icon', [90, 95, 82, 45]),
+  p('Luka Modrić', 91, 'CM', 'hr', 'Croatia 2018', 'national', '10s', 'star', [76, 80, 93, 72]),
+  p('Kylian Mbappé', 93, 'ST', 'fr', 'France 2018', 'national', '10s', 'star', [97, 90, 82, 40]),
+  p('Antoine Griezmann', 89, 'CAM', 'fr', 'France 2018', 'national', '10s', 'gold', [82, 86, 88, 55]),
+  p('N\u2019Golo Kanté', 89, 'CDM', 'fr', 'France 2018', 'national', '10s', 'star', [82, 66, 80, 91]),
+  p('Manuel Neuer', 90, 'GK', 'de', 'Germany 2014', 'national', '10s', 'star', [60, 48, 78, 88]),
+  p('Toni Kroos', 89, 'CM', 'de', 'Germany 2014', 'national', '10s', 'gold', [70, 82, 93, 72]),
+  p('Thomas Müller', 88, 'CAM', 'de', 'Germany 2014', 'national', '10s', 'gold', [78, 86, 84, 56]),
+  p('Robert Lewandowski', 92, 'ST', 'pl', 'Poland 2022', 'national', '20s', 'star', [80, 93, 80, 44]),
+  p('Erling Haaland', 91, 'ST', 'no', 'Norway 2024', 'national', '20s', 'star', [89, 94, 70, 45]),
+  p('Kevin De Bruyne', 91, 'CAM', 'be', 'Belgium 2022', 'national', '20s', 'star', [76, 88, 94, 64]),
+  p('Vinícius Júnior', 90, 'LW', 'br', 'Brazil 2024', 'national', '20s', 'star', [95, 84, 80, 40]),
+  p('Jude Bellingham', 90, 'CM', 'eng', 'England 2024', 'national', '20s', 'star', [82, 86, 87, 78]),
+  p('Harry Kane', 90, 'ST', 'eng', 'England 2022', 'national', '20s', 'star', [78, 93, 84, 46]),
+  p('Virgil van Dijk', 90, 'CB', 'nl', 'Netherlands 2022', 'national', '20s', 'star', [80, 60, 78, 92]),
+  p('Rúben Dias', 88, 'CB', 'pt', 'Portugal 2022', 'national', '20s', 'gold', [74, 56, 76, 90]),
+  p('Bruno Fernandes', 88, 'CAM', 'pt', 'Portugal 2022', 'national', '20s', 'gold', [76, 86, 89, 62]),
+  p('Rodri', 89, 'CDM', 'es', 'Spain 2024', 'national', '20s', 'star', [70, 78, 88, 90]),
+  p('Pedri', 87, 'CM', 'es', 'Spain 2024', 'national', '20s', 'gold', [76, 76, 89, 66]),
+  p('Lamine Yamal', 86, 'RW', 'es', 'Spain 2024', 'national', '20s', 'gold', [90, 80, 85, 38]),
+
+  // ---- Heroes / cult favourites ----
+  p('Gheorghe Hagi', 90, 'CAM', 'hr', 'Galatasaray 1999', 'club', '90s', 'hero', [82, 88, 92, 48]),
+  p('Pavel Nedvěd', 89, 'LM', 'cz', 'Czechia 2004', 'national', '00s', 'hero', [86, 86, 86, 66]),
+  p('Hidetoshi Nakata', 85, 'CAM', 'it', 'AS Roma 2001', 'club', '00s', 'hero', [80, 80, 86, 60]),
+  p('Abedi Pelé', 87, 'LW', 'gh', 'Ghana 1992', 'national', '90s', 'hero', [88, 84, 87, 48]),
+  p('Jay-Jay Okocha', 87, 'CAM', 'ng', 'Nigeria 1996', 'national', '90s', 'hero', [86, 82, 88, 50]),
+  p('Carlos Valderrama', 87, 'CAM', 'co', 'Colombia 1990', 'national', '90s', 'hero', [70, 76, 93, 52]),
+  p('Brian Laudrup', 88, 'LW', 'dk', 'Denmark 1992', 'national', '90s', 'hero', [88, 84, 87, 50]),
+  p('Henrik Larsson', 87, 'ST', 'se', 'Celtic 2001', 'club', '00s', 'hero', [84, 88, 80, 46]),
+  p('Peter Schmeichel', 89, 'GK', 'dk', 'Denmark 1992', 'national', '90s', 'hero', [58, 44, 64, 88]),
+  p('Enzo Francescoli', 88, 'CAM', 'uy', 'River Plate 1986', 'club', '80s', 'hero', [82, 84, 90, 48]),
+  p('Kenny Dalglish', 89, 'ST', 'sct', 'Liverpool 1984', 'club', '80s', 'hero', [80, 88, 88, 50]),
+  p('Roberto Donadoni', 85, 'RM', 'it', 'AC Milan 1989', 'club', '80s', 'gold', [84, 78, 84, 60]),
+]
+
+export const MANAGERS: Manager[] = [
+  { id: 'm1', name: 'Vittorio Sacchi', nation: NATIONS.it, formation: '4-3-3', chemBonus: 15, rating: 94, trophies: 7 },
+  { id: 'm2', name: 'Helmut König', nation: NATIONS.de, formation: '3-5-2', chemBonus: 12, rating: 92, trophies: 6 },
+  { id: 'm3', name: 'Diego Vázquez', nation: NATIONS.ar, formation: '4-2-3-1', chemBonus: 14, rating: 93, trophies: 5 },
+  { id: 'm4', name: 'Pep Maranço', nation: NATIONS.es, formation: '4-3-3', chemBonus: 18, rating: 95, trophies: 9 },
+  { id: 'm5', name: 'Carlos Mendes', nation: NATIONS.br, formation: '4-2-3-1', chemBonus: 13, rating: 91, trophies: 4 },
+  { id: 'm6', name: 'Henri Dubois', nation: NATIONS.fr, formation: '4-4-2', chemBonus: 11, rating: 90, trophies: 3 },
+  { id: 'm7', name: 'Sir Alan Whitlock', nation: NATIONS.eng, formation: '4-4-2', chemBonus: 12, rating: 92, trophies: 5 },
+  { id: 'm8', name: 'Marco van Dael', nation: NATIONS.nl, formation: '4-3-3', chemBonus: 16, rating: 93, trophies: 6 },
+  { id: 'm9', name: 'Ivan Petrović', nation: NATIONS.hr, formation: '3-5-2', chemBonus: 13, rating: 90, trophies: 3 },
+  { id: 'm10', name: 'João Ferreira', nation: NATIONS.pt, formation: '4-2-3-1', chemBonus: 15, rating: 92, trophies: 5 },
+]
+
+export const TOURNAMENT_TEAMS: TournamentTeam[] = [
+  { name: 'Germany 2014', flag: 'de', rating: 93 },
+  { name: 'Spain 2010', flag: 'es', rating: 94 },
+  { name: 'Brazil 1970', flag: 'br', rating: 96 },
+  { name: 'Barcelona 2009', flag: 'es', rating: 95 },
+  { name: 'France 2000', flag: 'fr', rating: 93 },
+  { name: 'Argentina 1986', flag: 'ar', rating: 93 },
+  { name: 'Netherlands 1974', flag: 'nl', rating: 91 },
+  { name: 'Italy 2006', flag: 'it', rating: 92 },
+  { name: 'AC Milan 1989', flag: 'it', rating: 94 },
+  { name: 'Real Madrid 2017', flag: 'es', rating: 95 },
+  { name: 'France 2018', flag: 'fr', rating: 93 },
+  { name: 'Brazil 2002', flag: 'br', rating: 95 },
+]
+
+export const ERA_FILTERS: { label: string; value: string }[] = [
+  { label: '70s', value: '70s' },
+  { label: '80s', value: '80s' },
+  { label: '90s', value: '90s' },
+  { label: '00s', value: '00s' },
+  { label: '10s', value: '10s' },
+  { label: '20s', value: '20s' },
+  { label: 'National Teams', value: 'national' },
+  { label: 'Club Teams', value: 'club' },
+]
+
+export const MVP_NAMES = [
+  'Ronaldo',
+  'Zidane',
+  'Maradona',
+  'Messi',
+  'Beckenbauer',
+  'Cruyff',
+  'Ronaldinho',
+  'Pelé',
+  'Van Basten',
+  'Müller',
+]

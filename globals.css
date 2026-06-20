@@ -1,0 +1,149 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-inter), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-neon: var(--neon);
+  --color-neon-soft: var(--neon-soft);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: dark;
+  --background: #050505;
+  --foreground: #f5f3ea;
+  --card: #0d0d0f;
+  --card-foreground: #f5f3ea;
+  --popover: #0d0d0f;
+  --popover-foreground: #f5f3ea;
+  --primary: #d4af37;
+  --primary-foreground: #050505;
+  --secondary: #16161a;
+  --secondary-foreground: #f5f3ea;
+  --muted: #131316;
+  --muted-foreground: #8b8b86;
+  --accent: #1c1c20;
+  --accent-foreground: #f5f3ea;
+  --destructive: #e5484d;
+  --border: rgba(212, 175, 55, 0.14);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #d4af37;
+
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.12);
+  --neon: #32ff9c;
+  --neon-soft: rgba(50, 255, 156, 0.12);
+
+  --radius: 1rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        rgba(212, 175, 55, 0.08),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 100% 100%,
+        rgba(50, 255, 156, 0.04),
+        transparent
+      );
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.01)
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-gold {
+    background: linear-gradient(
+      160deg,
+      rgba(212, 175, 55, 0.1),
+      rgba(212, 175, 55, 0.02)
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f5d77a, #d4af37 55%, #a87f1f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .shadow-gold {
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.3),
+      0 8px 40px -8px rgba(212, 175, 55, 0.35);
+  }
+  .shadow-neon {
+    box-shadow: 0 0 0 1px rgba(50, 255, 156, 0.4),
+      0 0 24px -2px rgba(50, 255, 156, 0.45);
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}

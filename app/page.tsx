@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Swords, Sparkles } from 'lucide-react'
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
-import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS } from '@/lib/data'
+import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS, TEAM_POOLS } from '@/lib/data'
 import { FORMATIONS } from '@/lib/formations'
 import {
   computeStats,
@@ -22,7 +22,7 @@ import { ChemistryPanel } from '@/components/chemistry-panel'
 import { PlayerInfoDialog } from '@/components/player-info-dialog'
 import { TournamentView } from '@/components/tournament-view'
 import { ChampionScreen } from '@/components/champion-screen'
-import { cn } from '@/lib/utils' // cn fonksiyonunu kullandığın için eklendi
+import { cn } from '@/lib/utils'
 
 type Phase = 'draft' | 'tournament' | 'champion'
 
@@ -56,21 +56,14 @@ export default function Page() {
     return pool.filter((p) => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.nation.name.toLowerCase().includes(q))
   }, [pool, search])
 
-  // GÜNCELLENMİŞ DİZİLİŞ FONKSİYONU
   const changeFormation = useCallback((formationName: string) => {
-  // 1. O dizilişe sahip menajeri bul (MANAGERS dizinden)
-  const matchingManager = MANAGERS.find(m => m.formation === formationName);
-  
-  // 2. Eğer menajer varsa onu set et (bu hem resmi hem isimi değiştirir)
-  if (matchingManager) {
-    setManager(matchingManager);
-  }
-  
-  // 3. Squad'ı ve dizilişi güncelle
-  setSquad(buildSquad(formationName));
-  setSelected(null);
-}, []);
-
+    const matchingManager = MANAGERS.find(m => m.formation === formationName);
+    if (matchingManager) {
+      setManager(matchingManager);
+    }
+    setSquad(buildSquad(formationName));
+    setSelected(null);
+  }, []);
 
   const rerollManager = useCallback(() => {
     setManagerRolling(true)
@@ -83,24 +76,22 @@ export default function Page() {
     }, 700)
   }, [manager.id])
 
+  // GÜNCELLENMİŞ ROLL MANTIĞI: Efsane Takım Havuzu
   const rollPool = useCallback(() => {
-    setPoolRolling(true)
-    const placedIds = new Set(squad.filter((s) => s.player).map((s) => s.player!.id))
-    let candidates = PLAYERS.filter((p) => !placedIds.has(p.id))
-    if (filters.length) {
-      candidates = candidates.filter((p) => {
-        const eras = filters.filter((f) => !['national', 'club'].includes(f))
-        const types = filters.filter((f) => ['national', 'club'].includes(f))
-        const eraOk = eras.length ? eras.includes(p.era) : true
-        const typeOk = types.length ? types.includes(p.teamType) : true
-        return eraOk && typeOk
-      })
-    }
+    setPoolRolling(true);
+    
+    const teamKeys = Object.keys(TEAM_POOLS);
+    const randomTeamKey = teamKeys[Math.floor(Math.random() * teamKeys.length)];
+    const selectedTeamPlayers = TEAM_POOLS[randomTeamKey];
+
+    const placedIds = new Set(squad.filter((s) => s.player).map((s) => s.player!.id));
+    const availablePlayers = selectedTeamPlayers.filter((p) => !placedIds.has(p.id));
+
     setTimeout(() => {
-      setPool(pickRandom(candidates, 9))
-      setPoolRolling(false)
-    }, 500)
-  }, [filters, squad])
+      setPool(availablePlayers);
+      setPoolRolling(false);
+    }, 500);
+  }, [squad]);
 
   const toggleFilter = useCallback((v: string) => {
     setFilters((prev) => (prev.includes(v) ? prev.filter((f) => f !== v) : [...prev, v]))
@@ -111,20 +102,11 @@ export default function Page() {
   }, [])
 
   const placePlayer = useCallback((slotId: string) => {
-  if (!selected) return;
-  
-  // Slotu bul
-  const targetSlot = squad.find(s => s.slot.id === slotId);
-  
-  // ÖNEMLİ: İstersen burada "Pozisyon uyuşmazlığı" uyarısı koyabilirsin, 
-  // ama her yere koyabilmek için bu if'i kaldır:
-  // if (selected.position !== targetSlot?.slot.role) return; 
-
-  setSquad((prev) => prev.map((s) => (s.slot.id === slotId ? { ...s, player: selected } : s)));
-  setPool((prev) => prev.filter((p) => p.id !== selected.id));
-  setSelected(null);
-}, [selected, squad]);
-
+    if (!selected) return;
+    setSquad((prev) => prev.map((s) => (s.slot.id === slotId ? { ...s, player: selected } : s)));
+    setPool((prev) => prev.filter((p) => p.id !== selected.id));
+    setSelected(null);
+  }, [selected]);
 
   const removePlayer = useCallback((slotId: string) => {
     setSquad((prev) =>
@@ -152,20 +134,6 @@ export default function Page() {
     setPhase('champion')
     window.scrollTo({ top: 0 })
   }, [matches])
-
-  const returnToLounge = useCallback(() => {
-    const next = randomItem(MANAGERS)
-    setManager(next)
-    setSquad(buildSquad(next.formation))
-    setPool([])
-    setSelected(null)
-    setSearch('')
-    setMatches([])
-    setPhase('draft')
-    window.scrollTo({ top: 0 })
-  }, [])
-
-  const userWon = matches[matches.length - 1]?.winner.name === 'Your VIP XI'
 
   return (
     <main className="min-h-[100dvh]">
@@ -200,10 +168,27 @@ export default function Page() {
               </div>
               <DraftPool pool={displayedPool} search={search} onSearch={setSearch} activeFilters={filters} onToggleFilter={toggleFilter} onRoll={rollPool} rolling={poolRolling} selectedId={selected?.id ?? null} onSelect={selectPlayer} onInfo={setInfoPlayer} />
             </div>
-            {/* ... geri kalan kısım aynen duruyor */}
+            
+            {/* Fixed Footer */}
+            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/80 backdrop-blur-xl">
+              <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="flex items-center gap-1 font-bold text-foreground">
+                    <Sparkles className="size-3.5 text-primary" />
+                    {stats.filled}/{stats.total} placed
+                  </span>
+                </div>
+                <button type="button" onClick={startTournament} disabled={!squadFull} className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-[#b58f24] px-5 py-2.5 text-sm font-black text-primary-foreground shadow-gold transition-transform active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40">
+                  <Swords className="size-4" />
+                  {squadFull ? 'Enter Tournament' : 'Fill Squad'}
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
+        {/* Diğer fazlar (tournament, champion) burada kalmaya devam ediyor */}
       </AnimatePresence>
+      <PlayerInfoDialog player={infoPlayer} open={!!infoPlayer} onOpenChange={(o) => !o && setInfoPlayer(null)} />
     </main>
   )
 }

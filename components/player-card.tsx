@@ -62,15 +62,26 @@ export function PlayerCard({
         </div>
       </div>
 
-      {/* monogram avatar */}
+      {/* monogram avatar / IMAGE */}
       <div className="my-2 flex items-center justify-center">
         <div
           className={cn(
-            'flex size-16 items-center justify-center rounded-full border bg-gradient-to-br from-white/10 to-transparent text-xl font-black text-foreground/90',
+            'flex size-20 items-center justify-center rounded-full border bg-gradient-to-br from-white/10 to-transparent overflow-hidden',
             r.ring,
           )}
         >
-          {monogram(player.name)}
+          {player.image ? (
+            <img 
+              src={player.image} 
+              alt={player.name} 
+              className="size-full object-cover"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+          ) : (
+            <span className="text-xl font-black text-foreground/90">
+              {monogram(player.name)}
+            </span>
+          )}
         </div>
       </div>
 

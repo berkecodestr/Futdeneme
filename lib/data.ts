@@ -221,3 +221,17 @@ export const MVP_NAMES = [
   'Van Basten',
   'Müller',
 ]
+
+// Mevcut kodlarının en altına bunu ekle:
+
+export const TEAM_POOLS: Record<string, Player[]> = {
+  "Barça 2009": PLAYERS.filter(p => p.team === 'Barcelona 2009'),
+  "Germany 1990": PLAYERS.filter(p => p.team === 'Germany 1990'),
+  "Brazil 1994": PLAYERS.filter(p => p.team === 'Brazil 1994'),
+  "France 2000": PLAYERS.filter(p => p.team === 'France 2000'),
+  "Brazil 2002": PLAYERS.filter(p => p.team === 'Brazil 2002'),
+  "Spain 2010": PLAYERS.filter(p => p.team === 'Spain 2010'),
+  "France 2018": PLAYERS.filter(p => p.team === 'France 2018'),
+  "Portugal 2022": PLAYERS.filter(p => p.team === 'Portugal 2022'),
+  "Spain 2024": PLAYERS.filter(p => p.team === 'Spain 2024'),
+};

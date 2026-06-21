@@ -1,11 +1,10 @@
 'use client'
 
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Swords, BrainCircuit, Goal, XCircle, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-// Mevcut importların (Bunlar aynı kalacak, sadece üst tarafa ekledim)
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
 import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS, TEAM_POOLS } from '@/lib/data'
 import { FORMATIONS } from '@/lib/formations'
@@ -33,7 +32,8 @@ function buildSquad(formationName: string): SquadSlot[] {
 const REWARD = 7500
 
 export default function Page() {
-  const [phase, setPhase] = useState<Phase>('lounge')
+  const [isLoading, setIsLoading] = useState(true)
+  const [phase, setPhase] = useState<Phase>('draft')
   const [coins, setCoins] = useState(12500)
   const [manager, setManager] = useState<Manager>(() => randomItem(MANAGERS))
   const [squad, setSquad] = useState<SquadSlot[]>(() => buildSquad(manager.formation))
@@ -45,6 +45,11 @@ export default function Page() {
   const [selected, setSelected] = useState<Player | null>(null)
   const [infoPlayer, setInfoPlayer] = useState<Player | null>(null)
   const [matches, setMatches] = useState<Match[]>([])
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const stats = useMemo(() => computeStats(squad), [squad])
   const chem = useMemo(() => computeChemistry(squad, manager), [squad, manager])
@@ -137,30 +142,25 @@ export default function Page() {
     setPhase('draft')
   }, [manager.formation])
 
+  if (isLoading) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-[#0A0A0A]">
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-primary font-black text-4xl">VIP FOOTBALL</motion.div>
+        <motion.div className="w-12 h-1 bg-primary mt-4 rounded-full" animate={{ width: ["0%", "100%"] }} transition={{ duration: 1.5 }} />
+      </div>
+    )
+  }
+
   return (
     <main className="min-h-[100dvh] bg-[#0A0A0A]">
-      {/* Oyun içi navigasyon */}
-      {phase !== 'lounge' && (
-        <div className="flex justify-center gap-4 py-4 border-b border-white/5 bg-background overflow-x-auto">
-          <button onClick={() => setPhase('lounge')} className="text-white/40"><Home className="size-4"/></button>
-          <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
-          <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'quiz' ? "text-primary" : "text-white/40")}>QUIZ</button>
-          <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'guess' ? "text-primary" : "text-white/40")}>GUESS</button>
-          <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>TTT</button>
-        </div>
-      )}
+      <div className="flex justify-center gap-6 py-4 border-b border-white/5 bg-[#0A0A0A] sticky top-0 z-50">
+        <button onClick={() => setPhase('draft')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
+        <button onClick={() => setPhase('quiz')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'quiz' ? "text-primary" : "text-white/40")}>QUIZ</button>
+        <button onClick={() => setPhase('guess')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'guess' ? "text-primary" : "text-white/40")}>GUESS</button>
+        <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>TTT</button>
+      </div>
 
       <AnimatePresence mode="wait">
-        {phase === 'lounge' && (
-          <motion.div key="lounge" className="p-4">
-             <header className="py-6 flex justify-between items-center">
-              <h1 className="font-black text-2xl text-white">Futbol Hub</h1>
-              <div className="bg-yellow-500/20 px-3 py-1 rounded-full text-yellow-500 font-bold">{coins} 🪙</div>
-            </header>
-            <GameHub onSelect={(id) => setPhase(id as Phase)} />
-          </motion.div>
-        )}
-
         {phase === 'draft' && (
           <motion.div key="draft" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Header coins={coins} />

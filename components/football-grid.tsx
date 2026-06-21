@@ -1,69 +1,218 @@
 'use client'
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}
 
 export function FootballGrid() {
   const [timeLeft, setTimeLeft] = useState(30)
   const [turn, setTurn] = useState<'user' | 'opponent'>('user')
-  const [grid, setGrid] = useState<string[]>(Array(9).fill(null))
   const [selectedCell, setSelectedCell] = useState<number | null>(null)
 
-  // Geri sayım ve sıra yönetimi
+  const [grid, setGrid] = useState<(string | null)[]>(
+    Array(9).fill(null)
+  )
+
+  const columns = ['MILAN', 'BARÇA', 'PSG']
+  const rows = ['PSG', 'LIV', 'FENER']
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          setTurn(turn === 'user' ? 'opponent' : 'user')
+          setTurn((current) =>
+            current === 'user'
+              ? 'opponent'
+              : 'user'
+          )
+
           return 30
         }
+
         return prev - 1
       })
     }, 1000)
-    return () => clearInterval(timer)
-  }, [turn])
 
-  const handlePlayerSelect = (playerName: string) => {
-    if (selectedCell !== null) {
-      const newGrid = [...grid]
-      newGrid[selectedCell] = playerName
-      setGrid(newGrid)
-      setSelectedCell(null)
-      setTurn(turn === 'user' ? 'opponent' : 'user')
-      setTimeLeft(30)
-    }
+    return () => clearInterval(timer)
+  }, [])
+
+  const handlePlayerSelect = (player: string) => {
+    if (selectedCell === null) return
+
+    const updated = [...grid]
+    updated[selectedCell] = player
+
+    setGrid(updated)
+    setSelectedCell(null)
+
+    setTurn((current) =>
+      current === 'user'
+        ? 'opponent'
+        : 'user'
+    )
+
+    setTimeLeft(30)
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-4 font-sans max-w-md mx-auto">
-      {/* Üst Bar: Zengin Tasarım */}
-      <div className="bg-[#0f172a] p-4 rounded-2xl flex items-center justify-between mb-6 border border-white/10 shadow-2xl">
-        <div className="flex flex-col">
-          <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Süre</span>
-          <span className="text-xl font-bold font-mono">{timeLeft}s</span>
-        </div>
-        <div className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider border", 
-          turn === 'user' ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400" : "bg-red-500/10 border-red-500/50 text-red-400"
-        )}>
-          {turn === 'user' ? 'Sıra Sende' : 'Rakip Düşünüyor'}
+    <div
+      className="
+      min-h-screen
+      bg-gradient-to-b
+      from-slate-950
+      via-blue-950
+      to-black
+      text-white
+      p-4
+      max-w-md
+      mx-auto
+      "
+    >
+      {/* ÜST BAR */}
+
+      <div
+        className="
+        rounded-3xl
+        border
+        border-blue-500/20
+        bg-slate-900/70
+        backdrop-blur
+        p-5
+        mb-6
+        shadow-2xl
+        "
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-xs text-slate-400 uppercase">
+              Süre
+            </p>
+
+            <h2 className="text-4xl font-black">
+              {timeLeft}
+            </h2>
+          </div>
+
+          <div className="text-center">
+            <p className="text-xs text-slate-400 uppercase">
+              Durum
+            </p>
+
+            <div
+              className={cn(
+                'px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2',
+                turn === 'user'
+                  ? 'bg-emerald-500/20 text-emerald-400'
+                  : 'bg-red-500/20 text-red-400'
+              )}
+            >
+              {turn === 'user'
+                ? 'SIRA SENDE'
+                : 'RAKİP DÜŞÜNÜYOR'}
+
+              {turn === 'opponent' && (
+                <>
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-bounce" />
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Oyun Alanı */}
-      <div className="grid grid-cols-4 gap-2 mb-8">
+      {/* GRID */}
+
+      <div className="grid grid-cols-4 gap-3">
+
         <div />
-        {['MILAN', 'BARÇA', 'PSG'].map((t, i) => <div key={i} className="text-[9px] font-black text-gray-500 text-center uppercase">{t}</div>)}
-        {['PSG', 'LIV', 'FENER'].map((row, r) => (
+
+        {columns.map((team) => (
+          <div
+            key={team}
+            className="
+            text-center
+            text-[11px]
+            font-black
+            text-slate-300
+            "
+          >
+            {team}
+          </div>
+        ))}
+
+        {rows.map((row, r) => (
           <>
-            <div className="text-[9px] font-black text-gray-500 flex items-center justify-center rotate-[-90deg]">{row}</div>
+            <div
+              key={row}
+              className="
+              flex
+              items-center
+              justify-center
+              text-[11px]
+              font-black
+              text-slate-300
+              "
+            >
+              {row}
+            </div>
+
             {[0, 1, 2].map((c) => {
               const idx = r * 3 + c
+
               return (
-                <button 
-                  key={idx} 
-                  onClick={() => turn === 'user' && setSelectedCell(idx)}
-                  className="h-20 bg-[#0f172a] rounded-xl border border-white/5 hover:border-blue-500/50 transition-all flex items-center justify-center text-[9px] p-2"
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (turn === 'user') {
+                      setSelectedCell(idx)
+                    }
+                  }}
+                  className={cn(
+                    `
+                    aspect-square
+                    rounded-3xl
+                    border
+                    shadow-xl
+                    transition-all
+                    flex
+                    items-center
+                    justify-center
+                    p-2
+                    `,
+                    grid[idx]
+                      ? 'bg-emerald-500/10 border-emerald-500/40'
+                      : 'bg-slate-900 border-slate-700 hover:border-blue-500'
+                  )}
                 >
-                  {grid[idx] || <span className="text-white/10 text-xl font-bold">+</span>}
+                  {grid[idx] ? (
+                    <div className="text-center">
+                      <div
+                        className="
+                        w-10
+                        h-10
+                        rounded-full
+                        bg-gradient-to-r
+                        from-blue-500
+                        to-cyan-400
+                        mx-auto
+                        mb-2
+                        "
+                      />
+
+                      <span className="text-[10px] font-bold">
+                        {grid[idx]}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-3xl text-white/10">
+                      +
+                    </span>
+                  )}
                 </button>
               )
             })}
@@ -71,20 +220,74 @@ export function FootballGrid() {
         ))}
       </div>
 
-      {/* Modern Oyuncu Seçme Paneli */}
+      {/* OYUNCU SEÇME PANELİ */}
+
       <AnimatePresence>
         {selectedCell !== null && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-0 left-0 w-full bg-[#111827] p-6 rounded-t-3xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] z-50"
+          <motion.div
+            initial={{
+              y: 300,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            exit={{
+              y: 300,
+              opacity: 0,
+            }}
+            className="
+            fixed
+            bottom-0
+            left-0
+            right-0
+            bg-slate-900/95
+            backdrop-blur-xl
+            rounded-t-3xl
+            border-t
+            border-blue-500/20
+            p-6
+            z-50
+            "
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[11px] font-black uppercase text-gray-400 tracking-widest">Kimi Seçiyorsun?</h3>
-              <button onClick={() => setSelectedCell(null)} className="text-[10px] font-bold text-gray-600">KAPAT</button>
+            <div className="flex justify-between mb-5">
+              <h3 className="font-black text-sm">
+                Oyuncu Seç
+              </h3>
+
+              <button
+                onClick={() =>
+                  setSelectedCell(null)
+                }
+                className="text-slate-400"
+              >
+                Kapat
+              </button>
             </div>
+
             <div className="grid grid-cols-2 gap-3">
-              {['Zidane', 'Ronaldinho', 'Ronaldo', 'Messi'].map(player => (
-                <button key={player} onClick={() => handlePlayerSelect(player)} className="bg-[#1e293b] p-4 rounded-xl text-xs font-bold border border-white/5 hover:border-blue-500 transition-all">
+              {[
+                'Zidane',
+                'Messi',
+                'Ronaldinho',
+                'Ronaldo',
+              ].map((player) => (
+                <button
+                  key={player}
+                  onClick={() =>
+                    handlePlayerSelect(player)
+                  }
+                  className="
+                  p-4
+                  rounded-2xl
+                  bg-slate-800
+                  border
+                  border-blue-500/20
+                  font-bold
+                  hover:bg-blue-900
+                  "
+                >
                   {player}
                 </button>
               ))}
@@ -94,8 +297,4 @@ export function FootballGrid() {
       </AnimatePresence>
     </div>
   )
-}
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
 }

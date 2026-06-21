@@ -2,7 +2,10 @@
 
 import { useMemo, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Swords, BrainCircuit, Goal, XCircle } from 'lucide-react'
+import { Swords, BrainCircuit, Goal, XCircle, Home } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+// Mevcut importların (Bunlar aynı kalacak, sadece üst tarafa ekledim)
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
 import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS, TEAM_POOLS } from '@/lib/data'
 import { FORMATIONS } from '@/lib/formations'
@@ -19,9 +22,9 @@ import { ChampionScreen } from '@/components/champion-screen'
 import { QuizArena } from '@/components/quiz-arena'
 import { GuessTeam } from '@/components/guess-team'
 import { TicTacToe } from '@/components/tic-tac-toe'
-import { cn } from '@/lib/utils'
+import { GameHub } from '@/components/game-hub'
 
-type Phase = 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'tic-tac-toe'
+type Phase = 'lounge' | 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'tic-tac-toe'
 
 function buildSquad(formationName: string): SquadSlot[] {
   return FORMATIONS[formationName].slots.map((slot) => ({ slot, player: null }))
@@ -30,7 +33,7 @@ function buildSquad(formationName: string): SquadSlot[] {
 const REWARD = 7500
 
 export default function Page() {
-  const [phase, setPhase] = useState<Phase>('draft')
+  const [phase, setPhase] = useState<Phase>('lounge')
   const [coins, setCoins] = useState(12500)
   const [manager, setManager] = useState<Manager>(() => randomItem(MANAGERS))
   const [squad, setSquad] = useState<SquadSlot[]>(() => buildSquad(manager.formation))
@@ -135,22 +138,29 @@ export default function Page() {
   }, [manager.formation])
 
   return (
-    <main className="min-h-[100dvh]">
-      {/* ARENA NAVIGATION - DÜZELTİLDİ */}
-      <div className="flex justify-center gap-4 py-4 border-b border-white/5 bg-background overflow-x-auto">
-        <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black uppercase tracking-widest transition", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
-        <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'quiz' ? "text-primary" : "text-white/40")}>
-          <BrainCircuit className="size-3" /> QUIZ
-        </button>
-        <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'guess' ? "text-primary" : "text-white/40")}>
-          <Goal className="size-3" /> GUESS
-        </button>
-        <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>
-          <XCircle className="size-3" /> TTT
-        </button>
-      </div>
+    <main className="min-h-[100dvh] bg-[#0A0A0A]">
+      {/* Oyun içi navigasyon */}
+      {phase !== 'lounge' && (
+        <div className="flex justify-center gap-4 py-4 border-b border-white/5 bg-background overflow-x-auto">
+          <button onClick={() => setPhase('lounge')} className="text-white/40"><Home className="size-4"/></button>
+          <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
+          <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'quiz' ? "text-primary" : "text-white/40")}>QUIZ</button>
+          <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'guess' ? "text-primary" : "text-white/40")}>GUESS</button>
+          <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black uppercase tracking-widest", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>TTT</button>
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
+        {phase === 'lounge' && (
+          <motion.div key="lounge" className="p-4">
+             <header className="py-6 flex justify-between items-center">
+              <h1 className="font-black text-2xl text-white">Futbol Hub</h1>
+              <div className="bg-yellow-500/20 px-3 py-1 rounded-full text-yellow-500 font-bold">{coins} 🪙</div>
+            </header>
+            <GameHub onSelect={(id) => setPhase(id as Phase)} />
+          </motion.div>
+        )}
+
         {phase === 'draft' && (
           <motion.div key="draft" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Header coins={coins} />
@@ -158,9 +168,7 @@ export default function Page() {
               <ManagerCard manager={manager} rolling={managerRolling} onReroll={rerollManager} />
               <div className="flex justify-center gap-2 p-2 bg-background/50 rounded-xl border border-border/50">
                 {['4-4-2', '4-3-3', '4-2-3-1'].map((f) => (
-                  <button key={f} onClick={() => changeFormation(f)} className={cn("px-4 py-1.5 rounded-lg text-xs font-bold transition", manager.formation === f ? "bg-primary text-white" : "bg-background text-primary")}>
-                    {f}
-                  </button>
+                  <button key={f} onClick={() => changeFormation(f)} className={cn("px-4 py-1.5 rounded-lg text-xs font-bold transition", manager.formation === f ? "bg-primary text-white" : "bg-background text-primary")}>{f}</button>
                 ))}
               </div>
               <StatsPanel stats={stats} />

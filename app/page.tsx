@@ -24,9 +24,11 @@ import { TournamentView } from '@/components/tournament-view'
 import { ChampionScreen } from '@/components/champion-screen'
 import { QuizArena } from '@/components/quiz-arena'
 import { GuessTeam } from '@/components/guess-team'
+import { TicTacToe } from '@/components/tic-tac-toe'
+import { BrainCircuit, Goal, XCircle } from 'lucide-react' // XCircle eklendi
 import { cn } from '@/lib/utils'
 
-type Phase = 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess'
+type Phase = 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'tic-tac-toe'
 
 function buildSquad(formationName: string): SquadSlot[] {
   return FORMATIONS[formationName].slots.map((slot) => ({ slot, player: null }))
@@ -145,6 +147,9 @@ export default function Page() {
       <div className="flex justify-center gap-6 py-4 border-b border-white/5 bg-background">
         <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black tracking-widest transition", phase === 'draft' ? "text-primary" : "text-white/40 hover:text-white")}>DRAFT</button>
         <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'quiz' ? "text-primary" : "text-white/40 hover:text-white")}>
+          <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40 hover:text-white")}>
+  <XCircle className="size-3" /> TTT
+</button>
           <BrainCircuit className="size-3" /> QUIZ
         </button>
         <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'guess' ? "text-primary" : "text-white/40 hover:text-white")}>
@@ -185,6 +190,7 @@ export default function Page() {
         {phase === 'guess' && <GuessTeam />}
         {phase === 'tournament' && <TournamentView matches={matches} onComplete={goChampion} />}
         {phase === 'champion' && <ChampionScreen won={matches[matches.length - 1]?.winner.name === 'Your VIP XI'} onReturn={returnToLounge} />}
+        {phase === 'tic-tac-toe' && <TicTacToe />}
       </AnimatePresence>
       <PlayerInfoDialog player={infoPlayer} open={!!infoPlayer} onOpenChange={(o) => !o && setInfoPlayer(null)} />
     </main>

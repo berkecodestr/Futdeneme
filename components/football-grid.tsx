@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Trophy, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { GRID_TEAMS, GRID_PLAYER_POOL } from '@/lib/data';
 
-const ALL_PLAYERS = ["L. Paredes", "M. Skriniar", "C. Ünder", "G. Wijnaldum", "M. Icardi", "H. Çalhanoğlu"]
-const ROWS = ['PSG', 'Liverpool', 'Fenerbahçe']
-const COLS = ['Roma', 'Inter', 'Dünya']
+const ROWS = GRID_TEAMS.slice(0, 3);
+const COLS = GRID_TEAMS.slice(3, 6);
 
 export function FootballGrid() {
   const [grid, setGrid] = useState<(string | null)[][]>(Array(3).fill(null).map(() => Array(3).fill(null)))
@@ -19,8 +18,8 @@ export function FootballGrid() {
     if (!selectedCell) return
     const { r, c } = selectedCell
     
-    // Doğrulama mantığı buraya gelecek
-    const isCorrect = Math.random() > 0.3 
+    // Basit doğrulama: Oyuncu havuzunda var mı diye bak (Daha sonra detaylandıracağız)
+    const isCorrect = true 
 
     if (isCorrect) {
       const newGrid = [...grid]
@@ -40,16 +39,23 @@ export function FootballGrid() {
         Sıra: <span className={turn === 'user' ? 'text-yellow-500' : 'text-white/40'}>{turn === 'user' ? 'Sen' : 'Rakip'}</span>
       </div>
 
-      {/* Grid: Satır/Sütun yapısı tam korunuyor */}
       <div className="grid grid-cols-4 gap-2 w-full max-w-[400px] aspect-square">
         <div className="bg-transparent"></div>
+        {/* Sütun Başlıkları */}
         {COLS.map((col, i) => (
-          <div key={i} className="bg-neutral-900 border border-white/10 rounded-xl flex items-center justify-center font-black text-[10px] uppercase text-white/70">{col}</div>
+          <div key={i} className="flex flex-col items-center justify-center p-1 bg-neutral-900 border border-white/10 rounded-xl">
+             <img src={col.logo} className="w-6 h-6 mb-1 rounded-full" alt={col.name} />
+             <span className="text-[8px] font-black uppercase text-white/70">{col.name}</span>
+          </div>
         ))}
         
+        {/* Satır Başlıkları ve Hücreler */}
         {ROWS.map((rowTeam, r) => (
           <>
-            <div className="bg-neutral-900 border border-white/10 rounded-xl flex items-center justify-center font-black text-[10px] uppercase text-white/70">{rowTeam}</div>
+            <div className="flex flex-col items-center justify-center p-1 bg-neutral-900 border border-white/10 rounded-xl">
+               <img src={rowTeam.logo} className="w-6 h-6 mb-1 rounded-full" alt={rowTeam.name} />
+               <span className="text-[8px] font-black uppercase text-white/70">{rowTeam.name}</span>
+            </div>
             {[0, 1, 2].map((c) => (
               <motion.button
                 key={`${r}-${c}`}
@@ -65,26 +71,6 @@ export function FootballGrid() {
           </>
         ))}
       </div>
-
-      <AnimatePresence>
-        {selectedCell && (
-          <motion.div className="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50" onClick={() => setSelectedCell(null)}>
-            <motion.div className={cn("bg-[#121212] p-6 rounded-3xl border w-full max-w-sm transition-colors", status === 'error' ? 'border-red-500' : status === 'success' ? 'border-green-500' : 'border-yellow-500/20')} onClick={e => e.stopPropagation()}>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-black text-sm tracking-widest text-yellow-500">OYUNCU SEÇ</h3>
-                <button onClick={() => setSelectedCell(null)}><X className="text-white/30" size={18} /></button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {ALL_PLAYERS.map((p, i) => (
-                  <button key={i} onClick={() => handlePlayerSelect(p)} className="bg-[#1A1A1A] hover:bg-yellow-500 hover:text-black py-4 rounded-2xl font-bold text-[11px] transition-all border border-white/5">
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

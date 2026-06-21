@@ -23,7 +23,7 @@ import { GuessTeam } from '@/components/guess-team'
 import { TicTacToe } from '@/components/tic-tac-toe'
 import { GameHub } from '@/components/game-hub'
 
-type Phase = 'lounge' | 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'tic-tac-toe'
+type Phase = 'lounge' | 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'football-grid'
 
 function buildSquad(formationName: string): SquadSlot[] {
   return FORMATIONS[formationName].slots.map((slot) => ({ slot, player: null }))

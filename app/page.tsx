@@ -2,17 +2,11 @@
 
 import { useMemo, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Swords, Sparkles, BrainCircuit, Goal } from 'lucide-react'
+import { Swords, BrainCircuit, Goal, XCircle } from 'lucide-react'
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
 import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS, TEAM_POOLS } from '@/lib/data'
 import { FORMATIONS } from '@/lib/formations'
-import {
-  computeStats,
-  computeChemistry,
-  pickRandom,
-  randomItem,
-  simulateTournament,
-} from '@/lib/draft'
+import { computeStats, computeChemistry, randomItem, simulateTournament } from '@/lib/draft'
 import { Header } from '@/components/header'
 import { ManagerCard } from '@/components/manager-card'
 import { DraftPool } from '@/components/draft-pool'
@@ -25,7 +19,6 @@ import { ChampionScreen } from '@/components/champion-screen'
 import { QuizArena } from '@/components/quiz-arena'
 import { GuessTeam } from '@/components/guess-team'
 import { TicTacToe } from '@/components/tic-tac-toe'
-import { BrainCircuit, Goal, XCircle } from 'lucide-react' // XCircle eklendi
 import { cn } from '@/lib/utils'
 
 type Phase = 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'tic-tac-toe'
@@ -143,17 +136,17 @@ export default function Page() {
 
   return (
     <main className="min-h-[100dvh]">
-      {/* ARENA NAVIGATION */}
-      <div className="flex justify-center gap-6 py-4 border-b border-white/5 bg-background">
-        <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black tracking-widest transition", phase === 'draft' ? "text-primary" : "text-white/40 hover:text-white")}>DRAFT</button>
-        <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'quiz' ? "text-primary" : "text-white/40 hover:text-white")}>
-          <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40 hover:text-white")}>
-  <XCircle className="size-3" /> TTT
-</button>
+      {/* ARENA NAVIGATION - DÜZELTİLDİ */}
+      <div className="flex justify-center gap-4 py-4 border-b border-white/5 bg-background overflow-x-auto">
+        <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black uppercase tracking-widest transition", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
+        <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'quiz' ? "text-primary" : "text-white/40")}>
           <BrainCircuit className="size-3" /> QUIZ
         </button>
-        <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'guess' ? "text-primary" : "text-white/40 hover:text-white")}>
+        <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'guess' ? "text-primary" : "text-white/40")}>
           <Goal className="size-3" /> GUESS
+        </button>
+        <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-[10px] font-black uppercase tracking-widest transition flex items-center gap-1", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>
+          <XCircle className="size-3" /> TTT
         </button>
       </div>
 
@@ -188,9 +181,9 @@ export default function Page() {
         )}
         {phase === 'quiz' && <QuizArena />}
         {phase === 'guess' && <GuessTeam />}
+        {phase === 'tic-tac-toe' && <TicTacToe />}
         {phase === 'tournament' && <TournamentView matches={matches} onComplete={goChampion} />}
         {phase === 'champion' && <ChampionScreen won={matches[matches.length - 1]?.winner.name === 'Your VIP XI'} onReturn={returnToLounge} />}
-        {phase === 'tic-tac-toe' && <TicTacToe />}
       </AnimatePresence>
       <PlayerInfoDialog player={infoPlayer} open={!!infoPlayer} onOpenChange={(o) => !o && setInfoPlayer(null)} />
     </main>

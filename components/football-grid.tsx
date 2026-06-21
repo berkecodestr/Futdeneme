@@ -24,8 +24,17 @@ const [countdown, setCountdown] = useState(3)
   })
 )
 
-  const columns = ['MILAN', 'BARÇA', 'PSG']
-  const rows = ['PSG', 'LIV', 'FENER']
+  const columns = [
+  '/teams/milan.png',
+  '/teams/barca.png',
+  '/teams/psg.png',
+]
+
+const rows = [
+  '/teams/ucl.png',
+  '/teams/liverpool.png',
+  '/teams/fenerbahce.png',
+]
 
   useEffect(() => {
     const timer = setInterval(() => {

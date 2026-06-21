@@ -11,7 +11,11 @@ export function FootballGrid() {
   const [timeLeft, setTimeLeft] = useState(30)
   const [turn, setTurn] = useState<'user' | 'opponent'>('user')
   const [selectedCell, setSelectedCell] = useState<number | null>(null)
+  const [screen, setScreen] = useState<
+  'menu' | 'searching' | 'countdown' | 'game'
+>('menu')
 
+const [countdown, setCountdown] = useState(3)
   const [grid, setGrid] = useState<(string | null)[]>(
     Array(9).fill(null)
   )

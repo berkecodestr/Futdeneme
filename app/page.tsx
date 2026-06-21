@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Swords, Sparkles, BrainCircuit } from 'lucide-react'
+import { Swords, Sparkles, BrainCircuit, Goal } from 'lucide-react'
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
 import { PLAYERS, MANAGERS, TOURNAMENT_TEAMS, TEAM_POOLS } from '@/lib/data'
 import { FORMATIONS } from '@/lib/formations'
@@ -23,9 +23,10 @@ import { PlayerInfoDialog } from '@/components/player-info-dialog'
 import { TournamentView } from '@/components/tournament-view'
 import { ChampionScreen } from '@/components/champion-screen'
 import { QuizArena } from '@/components/quiz-arena'
+import { GuessTeam } from '@/components/guess-team'
 import { cn } from '@/lib/utils'
 
-type Phase = 'draft' | 'tournament' | 'champion' | 'quiz'
+type Phase = 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess'
 
 function buildSquad(formationName: string): SquadSlot[] {
   return FORMATIONS[formationName].slots.map((slot) => ({ slot, player: null }))
@@ -141,10 +142,13 @@ export default function Page() {
   return (
     <main className="min-h-[100dvh]">
       {/* ARENA NAVIGATION */}
-      <div className="flex justify-center gap-4 py-3 border-b border-white/5 bg-background">
-        <button onClick={() => setPhase('draft')} className="text-[10px] font-black tracking-widest text-primary">DRAFT</button>
-        <button onClick={() => setPhase('quiz')} className="text-[10px] font-black tracking-widest text-white/40 hover:text-white flex items-center gap-1">
-          <BrainCircuit className="size-3" /> QUIZ ARENA
+      <div className="flex justify-center gap-6 py-4 border-b border-white/5 bg-background">
+        <button onClick={() => setPhase('draft')} className={cn("text-[10px] font-black tracking-widest transition", phase === 'draft' ? "text-primary" : "text-white/40 hover:text-white")}>DRAFT</button>
+        <button onClick={() => setPhase('quiz')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'quiz' ? "text-primary" : "text-white/40 hover:text-white")}>
+          <BrainCircuit className="size-3" /> QUIZ
+        </button>
+        <button onClick={() => setPhase('guess')} className={cn("text-[10px] font-black tracking-widest transition flex items-center gap-1", phase === 'guess' ? "text-primary" : "text-white/40 hover:text-white")}>
+          <Goal className="size-3" /> GUESS
         </button>
       </div>
 
@@ -168,7 +172,6 @@ export default function Page() {
               </div>
               <DraftPool pool={displayedPool} search={search} onSearch={setSearch} activeFilters={filters} onToggleFilter={toggleFilter} onRoll={rollPool} rolling={poolRolling} selectedId={selected?.id ?? null} onSelect={selectPlayer} onInfo={setInfoPlayer} />
             </div>
-            {/* FOOTER */}
             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/80 backdrop-blur-xl">
               <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
                 <button type="button" onClick={startTournament} disabled={!squadFull} className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-[#b58f24] px-5 py-3 text-sm font-black text-white">
@@ -179,6 +182,7 @@ export default function Page() {
           </motion.div>
         )}
         {phase === 'quiz' && <QuizArena />}
+        {phase === 'guess' && <GuessTeam />}
         {phase === 'tournament' && <TournamentView matches={matches} onComplete={goChampion} />}
         {phase === 'champion' && <ChampionScreen won={matches[matches.length - 1]?.winner.name === 'Your VIP XI'} onReturn={returnToLounge} />}
       </AnimatePresence>

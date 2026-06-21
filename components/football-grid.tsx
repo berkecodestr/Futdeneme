@@ -1,63 +1,92 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export function FootballGrid() {
-  const [timeLeft, setTimeLeft] = useState(30)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+// TİP TANIMLARI
+type CellState = {
+  player: string | null
+  team: string | null
+}
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev <= 1 ? 30 : prev - 1))
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+export function FootballGrid() {
+  // GRID STATE (3x3 grid)
+  const [grid, setGrid] = useState<CellState[]>(Array(9).fill({ player: null, team: null }))
+  const [selectedCell, setSelectedCell] = useState<number | null>(null)
+  
+  const rows = ['PSG', 'LIVERPOOL', 'FENERBAHÇE']
+  const cols = ['AC MILAN', 'BARCELONA', 'PSG']
+
+  const handleCellClick = (index: number) => {
+    setSelectedCell(index)
+  }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-4 font-sans">
-      {/* Üst Bar */}
-      <div className="bg-[#1e293b] p-4 rounded-2xl flex items-center justify-between mb-6 border border-white/10 shadow-xl">
-        <div className="text-sm font-bold text-gray-400">SÜRE: <span className="text-white text-xl">{timeLeft}</span></div>
-        <button className="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg font-bold text-xs hover:bg-red-500/40 transition">PES ET</button>
+    <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 space-y-6">
+      
+      {/* HEADER: Süre ve Pes Et */}
+      <div className="w-full bg-[#1e293b] p-4 rounded-2xl flex items-center justify-between border border-white/10 shadow-lg">
+        <div className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+          Süre: <span className="text-white text-xl ml-2">29</span>
+        </div>
+        <button className="bg-red-500/10 text-red-500 px-4 py-1.5 rounded-lg font-bold text-xs border border-red-500/20 hover:bg-red-500/20 transition">
+          PES ET
+        </button>
       </div>
 
-      {/* Oyun Alanı */}
-      <div className="grid grid-cols-4 gap-2 mb-8">
-        <div />
-        {['AC MILAN', 'BARCELONA', 'PSG'].map((team, i) => (
-          <div key={i} className="bg-[#1e293b] p-2 rounded-lg text-[10px] font-black text-center border border-white/5">{team}</div>
-        ))}
-        {['PSG', 'LIVERPOOL', 'FENERBAHÇE'].map((team, i) => (
-          <div key={i} className="contents">
-            <div className="bg-[#1e293b] p-2 rounded-lg text-[10px] font-black text-center border border-white/5 rotate-[-90deg] flex items-center justify-center">{team}</div>
-            {[0, 1, 2].map((_, j) => (
-              <motion.button 
-                key={j}
-                whileHover={{ scale: 0.98 }}
-                onClick={() => setIsMenuOpen(true)}
-                className="h-20 bg-[#1e293b] rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center text-white/20 hover:border-white/30 transition"
-              >
-                +
-              </motion.button>
-            ))}
+      {/* GRID CONTAINER */}
+      <div className="grid grid-cols-4 gap-2 w-full">
+        {/* Boş köşe */}
+        <div className="aspect-square" />
+        
+        {/* Kolon Başlıkları */}
+        {cols.map((col, i) => (
+          <div key={`col-${i}`} className="bg-[#1e293b] p-2 rounded-xl text-[9px] font-black text-center flex items-center justify-center border border-white/5 text-gray-300">
+            {col}
           </div>
         ))}
+
+        {/* Satırlar ve Hücreler */}
+        {rows.map((row, rowIndex) => (
+          <>
+            <div key={`row-${rowIndex}`} className="bg-[#1e293b] p-2 rounded-xl text-[9px] font-black text-center flex items-center justify-center border border-white/5 text-gray-300 rotate-[-90deg]">
+              {row}
+            </div>
+            {[0, 1, 2].map((colIndex) => {
+              const cellIndex = rowIndex * 3 + colIndex
+              return (
+                <motion.button
+                  key={`cell-${cellIndex}`}
+                  whileHover={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleCellClick(cellIndex)}
+                  className="aspect-square bg-[#0f172a] rounded-xl border border-white/10 flex flex-col items-center justify-center transition-all hover:bg-[#1e293b]"
+                >
+                  {grid[cellIndex].player ? (
+                    <span className="text-[10px] font-bold">{grid[cellIndex].player}</span>
+                  ) : (
+                    <span className="text-white/20 text-xl font-thin">+</span>
+                  )}
+                </motion.button>
+              )
+            })}
+          </>
+        ))}
       </div>
 
-      {/* Oyuncu Seçme Menüsü */}
+      {/* SEÇİM PANELİ (Geliştirilebilir) */}
       <AnimatePresence>
-        {isMenuOpen && (
+        {selectedCell !== null && (
           <motion.div 
-            initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 w-full bg-[#0f172a] p-6 rounded-t-3xl border-t border-white/10 shadow-2xl z-50"
+            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-0 w-full max-w-md bg-[#0f172a] p-6 rounded-t-3xl border-t border-white/10 shadow-2xl z-50"
           >
-            <h3 className="text-sm font-bold mb-4 text-gray-400">OYUNCU SEÇ</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {['Beckenbauer', 'Müller', 'Pelé', 'Cruyff'].map((player, i) => (
-                <button onClick={() => setIsMenuOpen(false)} key={i} className="bg-[#1e293b] p-4 rounded-xl text-xs font-bold border border-white/10 hover:border-blue-500 transition">
-                  {player}
-                </button>
-              ))}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold">Oyuncu Seç ({selectedCell + 1}. Hücre)</h3>
+              <button onClick={() => setSelectedCell(null)} className="text-gray-500">Kapat</button>
+            </div>
+            {/* Buraya oyuncu listesi gelecek */}
+            <div className="h-32 flex items-center justify-center border-2 border-dashed border-white/10 rounded-xl text-gray-500">
+              Oyuncu Listesi Buraya Gelecek
             </div>
           </motion.div>
         )}

@@ -235,3 +235,20 @@ export const TEAM_POOLS: Record<string, Player[]> = {
   "Portugal 2022": PLAYERS.filter(p => p.team === 'Portugal 2022'),
   "Spain 2024": PLAYERS.filter(p => p.team === 'Spain 2024'),
 };
+
+// --- GRID OYUNU İÇİN EK VERİLER ---
+
+export const GRID_TEAMS = [
+  { name: 'PSG', logo: 'https://cdn-icons-png.flaticon.com/128/732/732000.png' },
+  { name: 'Liverpool', logo: 'https://cdn-icons-png.flaticon.com/128/732/732001.png' },
+  { name: 'Fenerbahçe', logo: 'https://cdn-icons-png.flaticon.com/128/732/732002.png' },
+  { name: 'AC Milan', logo: 'https://cdn-icons-png.flaticon.com/128/732/732003.png' },
+  { name: 'Barcelona', logo: 'https://cdn-icons-png.flaticon.com/128/732/732004.png' }
+];
+
+export const GRID_PLAYER_POOL = PLAYERS.map(p => ({
+  name: p.name,
+  team: p.team
+}));
+
+// --- GRID OYUNU İÇİN EK VERİLER SONU ---

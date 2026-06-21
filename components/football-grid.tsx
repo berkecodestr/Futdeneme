@@ -10,15 +10,14 @@ export function FootballGrid() {
   const [grid, setGrid] = useState<(string | null)[][]>(Array(3).fill(null).map(() => Array(3).fill(null)));
   const [selectedCell, setSelectedCell] = useState<{r: number, c: number} | null>(null);
 
-  // Oyuncu seçme fonksiyonu
   const handleSelect = (playerName: string) => {
     if (selectedCell) {
       const { r, c } = selectedCell;
       const newGrid = [...grid];
       newGrid[r][c] = playerName;
       setGrid(newGrid);
-      setSelectedCell(null); // Modal'ı kapat
-      setTurn(turn === 'user' ? 'opponent' : 'user'); // Sırayı rakibe geçir
+      setSelectedCell(null);
+      setTurn(turn === 'user' ? 'opponent' : 'user');
     }
   };
 
@@ -37,8 +36,20 @@ export function FootballGrid() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#0A0A0A] text-white p-4">
-      <div className={cn("mb-8 px-6 py-2 rounded-full border font-black uppercase text-xs transition-all", turn === 'user' ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400" : "bg-red-500/10 border-red-500/50 text-red-400")}>
-        SIRA: {turn === 'user' ? 'SEN' : 'RAKİP'}
+      
+      {/* GÜNCELLENEN SIRA KISMI */}
+      <div className="flex flex-col items-center gap-2 mb-8">
+        <div className={cn(
+          "px-8 py-3 rounded-full border-2 font-black uppercase tracking-widest transition-all",
+          turn === 'user' 
+            ? "bg-emerald-500/20 border-emerald-400 text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.3)]" 
+            : "bg-neutral-800 border-neutral-600 text-neutral-500"
+        )}>
+          {turn === 'user' ? 'SENİN SIRAN' : 'RAKİBİN SIRASI'}
+        </div>
+        <div className={turn === 'opponent' ? "text-red-400 font-bold text-xs" : "text-neutral-600 font-bold text-xs"}>
+          {turn === 'opponent' ? 'RAKİP HAMLE YAPIYOR...' : 'BEKLENİYOR...'}
+        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-2 w-full max-w-[400px]">
@@ -58,7 +69,6 @@ export function FootballGrid() {
         ))}
       </div>
 
-      {/* OYUNCU SEÇME MODALI */}
       <AnimatePresence>
         {selectedCell && (
           <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
@@ -71,11 +81,4 @@ export function FootballGrid() {
                   </button>
                 ))}
               </div>
-              <button onClick={() => setSelectedCell(null)} className="mt-6 w-full py-3 bg-red-500/20 text-red-500 rounded-xl font-bold">KAPAT</button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
+              <button onClick={() =>

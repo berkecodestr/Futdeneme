@@ -43,6 +43,31 @@ const [countdown, setCountdown] = useState(3)
     return () => clearInterval(timer)
   }, [])
 
+  useEffect(() => {
+  if (screen !== 'countdown') return
+
+  const timer = setInterval(() => {
+    setCountdown((prev) => {
+      if (prev <= 1) {
+        setScreen('game')
+        return 3
+      }
+
+      return prev - 1
+    })
+  }, 1000)
+
+  return () => clearInterval(timer)
+}, [screen])
+
+const startMatchmaking = () => {
+  setScreen('searching')
+
+  setTimeout(() => {
+    setScreen('countdown')
+  }, 3000)
+}
+  
   const handlePlayerSelect = (player: string) => {
     if (selectedCell === null) return
 

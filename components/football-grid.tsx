@@ -2,62 +2,79 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Trophy } from 'lucide-react'
+import { Trophy, X } from 'lucide-react'
 
-// Örnek oyuncu listesi (bunu ileride kendi veritabanından çekeceğiz)
+// Buradaki takımları ve oyuncuları grid-utils'ten çekebilirsin
+const ROWS = ['PSG', 'Liverpool', 'Fenerbahçe']
+const COLS = ['Roma', 'Inter', 'Dünya']
 const MOCK_PLAYERS = ["L. Paredes", "M. Skriniar", "C. Ünder", "G. Wijnaldum"]
 
 export function FootballGrid() {
   const [selectedCell, setSelectedCell] = useState<{r: number, c: number} | null>(null)
 
   return (
-    <div className="flex flex-col items-center py-6 bg-black min-h-screen text-white">
-      <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-yellow-500">
-        <Trophy className="size-5" /> Futbol Grid
+    <div className="flex flex-col items-center py-10 bg-[#0A0A0A] min-h-screen text-white px-4">
+      <h2 className="text-2xl font-black mb-8 flex items-center gap-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
+        <Trophy className="size-6 text-yellow-500" /> VIP FOOTBALL GRID
       </h2>
 
-      {/* Grid Yapısı */}
-      <div className="grid grid-cols-4 gap-2 p-2 bg-white/5 rounded-2xl">
-        <div className="size-16"></div>
-        {['Roma', 'Inter', 'Dünya'].map((t, i) => (
-          <div key={i} className="size-16 bg-neutral-800 rounded-lg flex items-center justify-center font-bold text-xs">{t}</div>
+      {/* Grid */}
+      <div className="grid grid-cols-4 gap-2">
+        <div className="size-20"></div>
+        {COLS.map((col, i) => (
+          <div key={i} className="size-20 bg-neutral-900 border border-white/5 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-wider text-white/60">
+            {col}
+          </div>
         ))}
         
-        {['PSG', 'Liverpool', 'Fenerbahçe'].map((rowTeam, r) => (
+        {ROWS.map((rowTeam, r) => (
           <>
-            <div className="size-16 bg-neutral-800 rounded-lg flex items-center justify-center font-bold text-xs">{rowTeam}</div>
+            <div className="size-20 bg-neutral-900 border border-white/5 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-wider text-white/60">
+              {rowTeam}
+            </div>
             {[0, 1, 2].map((c) => (
               <motion.button
                 key={`${r}-${c}`}
-                whileHover={{ scale: 0.95 }}
+                whileHover={{ scale: 0.98, borderColor: 'rgba(234, 179, 8, 0.5)' }}
                 onClick={() => setSelectedCell({ r, c })}
-                className="size-16 bg-neutral-900 border border-white/10 rounded-lg flex items-center justify-center text-white/40"
+                className="size-20 bg-neutral-900 border-2 border-white/5 rounded-2xl flex items-center justify-center text-white/10 transition-all shadow-inner"
               >
-                ?
+                <span className="text-2xl font-bold">+</span>
               </motion.button>
             ))}
           </>
         ))}
       </div>
 
-      {/* Oyuncu Seçme Modalı */}
+      {/* Oyuncu Seçme Modalı (Gelişmiş Tasarım) */}
       <AnimatePresence>
         {selectedCell && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center z-50 p-4"
             onClick={() => setSelectedCell(null)}
           >
-            <div className="bg-neutral-900 p-6 rounded-2xl border border-yellow-500/30 w-full max-w-xs" onClick={e => e.stopPropagation()}>
-              <h3 className="text-center font-bold mb-4">Oyuncu Seç</h3>
-              <div className="grid gap-3">
+            <motion.div 
+              initial={{ y: 50 }} animate={{ y: 0 }} exit={{ y: 50 }}
+              className="bg-[#121212] p-6 rounded-3xl border border-white/10 w-full max-w-sm shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-black text-lg">OYUNCU SEÇ</h3>
+                <button onClick={() => setSelectedCell(null)} className="text-white/50"><X size={20} /></button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
                 {MOCK_PLAYERS.map((p, i) => (
-                  <button key={i} className="bg-neutral-800 hover:bg-yellow-500/20 p-3 rounded-xl border border-white/10 transition">
+                  <button 
+                    key={i} 
+                    className="bg-neutral-900 hover:bg-gradient-to-r hover:from-yellow-600 hover:to-yellow-700 p-4 rounded-2xl border border-white/5 font-bold text-sm transition-all shadow-lg"
+                  >
                     {p}
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

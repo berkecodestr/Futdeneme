@@ -16,9 +16,13 @@ export function FootballGrid() {
 >('menu')
 
 const [countdown, setCountdown] = useState(3)
-  const [grid, setGrid] = useState<(string | null)[]>(
-    Array(9).fill(null)
-  )
+  const [grid, setGrid] = useState(
+  Array(9).fill({
+    player: null,
+    image: null,
+    owner: null
+  })
+)
 
   const columns = ['MILAN', 'BARÇA', 'PSG']
   const rows = ['PSG', 'LIV', 'FENER']

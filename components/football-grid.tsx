@@ -85,7 +85,50 @@ const startMatchmaking = () => {
 
     setTimeLeft(30)
   }
+if (screen === 'menu') {
+  return (
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
+      <div className="text-7xl mb-6">⚽</div>
 
+      <h1 className="text-4xl font-black mb-4">
+        FOOTBALL GRID
+      </h1>
+
+      <button
+        onClick={startMatchmaking}
+        className="bg-blue-600 px-8 py-4 rounded-2xl font-bold"
+      >
+        MAÇ BUL
+      </button>
+    </div>
+  )
+}
+
+if (screen === 'searching') {
+  return (
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
+      <div className="text-7xl animate-bounce mb-6">⚽</div>
+
+      <h2 className="text-3xl font-bold">
+        Rakip Aranıyor...
+      </h2>
+
+      <p className="text-slate-400 mt-4">
+        Loading...
+      </p>
+    </div>
+  )
+}
+
+if (screen === 'countdown') {
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+      <div className="text-9xl font-black">
+        {countdown}
+      </div>
+    </div>
+  )
+}
   return (
     <div
       className="

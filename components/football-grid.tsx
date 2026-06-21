@@ -1,53 +1,60 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Trophy, RefreshCw } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { getRandomGridTeams, getPlayersForIntersection } from '@/lib/grid-utils'
+import { getRandomGridTeams } from '@/lib/grid-utils'
 
 export function FootballGrid() {
   const [grid, setGrid] = useState<{rows: any[], cols: any[]} | null>(null)
-  const [selectedCell, setSelectedCell] = useState<{r: number, c: number} | null>(null)
 
   useEffect(() => {
     setGrid(getRandomGridTeams())
   }, [])
 
-  if (!grid) return <div className="text-white">Yükleniyor...</div>
+  if (!grid) return <div className="text-white text-center p-10">Yükleniyor...</div>
 
   return (
-    <div className="flex flex-col items-center py-10 px-4">
-      <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-2">
-        <Trophy className="text-yellow-500" /> Futbol Grid
+    <div className="flex flex-col items-center py-6 bg-black min-h-screen text-white">
+      <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-yellow-500">
+        <Trophy className="size-5" /> Futbol Grid (Derbi Modu)
       </h2>
 
-      {/* 3x3 Izgara */}
-      <div className="grid grid-cols-4 gap-2">
-        <div className="size-20"></div> {/* Sol üst boşluk */}
+      {/* Grid Yapısı */}
+      <div className="grid grid-cols-4 gap-2 p-2 bg-white/5 rounded-2xl">
+        <div className="size-16"></div> {/* Sol üst köşe boş */}
+        
+        {/* Sütun Takımları */}
         {grid.cols.map((col, i) => (
-          <div key={i} className="size-20 bg-white/10 rounded-xl flex items-center justify-center text-2xl border border-white/5">{col.logo}</div>
+          <div key={i} className="size-16 bg-white/10 rounded-lg flex items-center justify-center text-3xl">
+            {col.logo}
+          </div>
         ))}
         
+        {/* Satır Takımları ve Hücreler */}
         {grid.rows.map((row, r) => (
           <>
-            <div className="size-20 bg-white/10 rounded-xl flex items-center justify-center text-2xl border border-white/5">{row.logo}</div>
+            <div className="size-16 bg-white/10 rounded-lg flex items-center justify-center text-3xl">
+              {row.logo}
+            </div>
             {[0, 1, 2].map((c) => (
               <motion.button
                 key={`${r}-${c}`}
-                whileHover={{ scale: 0.98 }}
-                onClick={() => setSelectedCell({ r, c })}
-                className="size-20 bg-background border-2 border-white/10 rounded-xl flex items-center justify-center hover:border-primary/50 transition-all"
+                whileHover={{ scale: 0.95 }}
+                className="size-16 bg-neutral-900 border border-white/10 rounded-lg flex items-center justify-center font-bold text-white/30"
               >
-                <span className="text-white/20 text-xs">?</span>
+                ?
               </motion.button>
             ))}
           </>
         ))}
       </div>
 
-      <button onClick={() => setGrid(getRandomGridTeams())} className="mt-8 flex items-center gap-2 text-primary font-bold">
-        <RefreshCw className="size-4" /> Yeni Maç
+      <button 
+        onClick={() => setGrid(getRandomGridTeams())} 
+        className="mt-8 flex items-center gap-2 text-yellow-500 font-bold hover:opacity-80 transition-opacity"
+      >
+        <RefreshCw className="size-4" /> Yeni Izgarayı Karıştır
       </button>
     </div>
   )

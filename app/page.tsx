@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Swords, BrainCircuit, Goal, XCircle, Home } from 'lucide-react'
+import { Swords, Goal, XCircle, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 import type { Player, Manager, SquadSlot, Match } from '@/lib/types'
@@ -20,8 +20,7 @@ import { TournamentView } from '@/components/tournament-view'
 import { ChampionScreen } from '@/components/champion-screen'
 import { QuizArena } from '@/components/quiz-arena'
 import { GuessTeam } from '@/components/guess-team'
-import { TicTacToe } from '@/components/tic-tac-toe'
-import { GameHub } from '@/components/game-hub'
+import { FootballGrid } from '@/components/football-grid' // Yeni bileşen buraya eklendi
 
 type Phase = 'lounge' | 'draft' | 'tournament' | 'champion' | 'quiz' | 'guess' | 'football-grid'
 
@@ -157,7 +156,7 @@ export default function Page() {
         <button onClick={() => setPhase('draft')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'draft' ? "text-primary" : "text-white/40")}>DRAFT</button>
         <button onClick={() => setPhase('quiz')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'quiz' ? "text-primary" : "text-white/40")}>QUIZ</button>
         <button onClick={() => setPhase('guess')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'guess' ? "text-primary" : "text-white/40")}>GUESS</button>
-        <button onClick={() => setPhase('tic-tac-toe')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'tic-tac-toe' ? "text-primary" : "text-white/40")}>TTT</button>
+        <button onClick={() => setPhase('football-grid')} className={cn("text-xs font-black uppercase tracking-widest", phase === 'football-grid' ? "text-primary" : "text-white/40")}>TTT</button>
       </div>
 
       <AnimatePresence mode="wait">
@@ -189,7 +188,7 @@ export default function Page() {
         )}
         {phase === 'quiz' && <QuizArena />}
         {phase === 'guess' && <GuessTeam />}
-        {phase === 'tic-tac-toe' && <TicTacToe />}
+        {phase === 'football-grid' && <FootballGrid />}
         {phase === 'tournament' && <TournamentView matches={matches} onComplete={goChampion} />}
         {phase === 'champion' && <ChampionScreen won={matches[matches.length - 1]?.winner.name === 'Your VIP XI'} onReturn={returnToLounge} />}
       </AnimatePresence>

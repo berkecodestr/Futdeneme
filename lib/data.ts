@@ -136,7 +136,7 @@ export const PLAYERS: Player[] = [
   // ---- Modern stars 10s-20s ----
   p('Cristiano Ronaldo', 95, 'ST', 'pt', 'Portugal 2016', 'national', '10s', 'icon', [90, 95, 82, 45]),
   p('Luka Modrić', 91, 'CM', 'hr', 'Croatia 2018', 'national', '10s', 'star', [76, 80, 93, 72]),
-  p('Kylian Mbappé', 93, 'ST', 'fr', 'France 2018', 'national', '10s', 'star', [97, 90, 82, 40]),
+  p('Kylian Mbappé', 93, 'LW', 'fr', 'France 2018', 'national', '10s', 'star', [97, 90, 82, 40]),
   p('Antoine Griezmann', 89, 'CAM', 'fr', 'France 2018', 'national', '10s', 'gold', [82, 86, 88, 55]),
   p('N\u2019Golo Kanté', 89, 'CDM', 'fr', 'France 2018', 'national', '10s', 'star', [82, 66, 80, 91]),
   p('Manuel Neuer', 90, 'GK', 'de', 'Germany 2014', 'national', '10s', 'star', [60, 48, 78, 88]),
